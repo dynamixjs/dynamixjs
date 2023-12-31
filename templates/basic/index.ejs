@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include("site-metadata-header.ejs", site.metadata) %>
+    </head>
+    <body>
+        <h1>My Blog</h1>
+        <main>
+            <div>
+                <%- include("post-listing.ejs", blog) %>
+            </div>
+        </main>
+    </body>
+</html>
