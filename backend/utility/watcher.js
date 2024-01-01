@@ -1,7 +1,9 @@
 import { watch } from "chokidar"
 import { spawn } from "child_process"
 import chalk from "chalk"
+import { io } from "socket.io-client"
 
+const socket = io('http://localhost:3030/dev-server')
 
 const startWatcher = async () => {
     const log = console.log
@@ -38,6 +40,7 @@ const startWatcher = async () => {
         })
         frontendChildProcess.stdout.on("data", (data) => {
             log(bufferToString(data))
+            socket.emit('reload')
         })
         frontendChildProcess.stderr.on("data", (data) => {
             log(bufferToString(data))

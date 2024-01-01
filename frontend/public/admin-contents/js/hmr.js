@@ -3046,11 +3046,11 @@ var Manager = class extends Emitter {
     if (~this._readyState.indexOf("open"))
       return this;
     this.engine = new Socket(this.uri, this.opts);
-    const socket = this.engine;
+    const socket2 = this.engine;
     const self2 = this;
     this._readyState = "opening";
     this.skipReconnect = false;
-    const openSubDestroy = on(socket, "open", function() {
+    const openSubDestroy = on(socket2, "open", function() {
       self2.onopen();
       fn && fn();
     });
@@ -3064,13 +3064,13 @@ var Manager = class extends Emitter {
         this.maybeReconnectOnOpen();
       }
     };
-    const errorSub = on(socket, "error", onError);
+    const errorSub = on(socket2, "error", onError);
     if (false !== this._timeout) {
       const timeout = this._timeout;
       const timer = this.setTimeoutFn(() => {
         openSubDestroy();
         onError(new Error("timeout"));
-        socket.close();
+        socket2.close();
       }, timeout);
       if (this.opts.autoUnref) {
         timer.unref();
@@ -3101,8 +3101,8 @@ var Manager = class extends Emitter {
     this.cleanup();
     this._readyState = "open";
     this.emitReserved("open");
-    const socket = this.engine;
-    this.subs.push(on(socket, "ping", this.onping.bind(this)), on(socket, "data", this.ondata.bind(this)), on(socket, "error", this.onerror.bind(this)), on(socket, "close", this.onclose.bind(this)), on(this.decoder, "decoded", this.ondecoded.bind(this)));
+    const socket2 = this.engine;
+    this.subs.push(on(socket2, "ping", this.onping.bind(this)), on(socket2, "data", this.ondata.bind(this)), on(socket2, "error", this.onerror.bind(this)), on(socket2, "close", this.onclose.bind(this)), on(this.decoder, "decoded", this.ondecoded.bind(this)));
   }
   /**
    * Called upon a ping.
@@ -3149,14 +3149,14 @@ var Manager = class extends Emitter {
    * @public
    */
   socket(nsp, opts) {
-    let socket = this.nsps[nsp];
-    if (!socket) {
-      socket = new Socket2(this, nsp, opts);
-      this.nsps[nsp] = socket;
-    } else if (this._autoConnect && !socket.active) {
-      socket.connect();
+    let socket2 = this.nsps[nsp];
+    if (!socket2) {
+      socket2 = new Socket2(this, nsp, opts);
+      this.nsps[nsp] = socket2;
+    } else if (this._autoConnect && !socket2.active) {
+      socket2.connect();
     }
-    return socket;
+    return socket2;
   }
   /**
    * Called upon a socket close.
@@ -3164,11 +3164,11 @@ var Manager = class extends Emitter {
    * @param socket
    * @private
    */
-  _destroy(socket) {
+  _destroy(socket2) {
     const nsps = Object.keys(this.nsps);
     for (const nsp of nsps) {
-      const socket2 = this.nsps[nsp];
-      if (socket2.active) {
+      const socket3 = this.nsps[nsp];
+      if (socket3.active) {
         return;
       }
     }
@@ -3319,11 +3319,5 @@ Object.assign(lookup2, {
 });
 
 // frontend/resources/js/hmr.js
-var ws;
-window.onload = () => {
-  ws = new lookup2();
-  ws.on("reloadPage", () => {
-  });
-  ws.on("scriptError", (errorText) => {
-  });
-};
+var socket = lookup2("/dev-server");
+socket.on("reload", () => window.location.reload());

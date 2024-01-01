@@ -1,3 +1,5 @@
+import EditorJS from "@editorjs/editorjs"
+
 window.onload = () => {
-    alert("caaa")
+    alert(window.location.pathname)
 }

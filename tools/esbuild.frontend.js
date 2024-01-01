@@ -3,7 +3,7 @@ import { build } from "esbuild"
 import postCssPlugin from "esbuild-style-plugin"
 import tailwindcss from "tailwindcss"
 import autoprefixer from "autoprefixer"
-import * as fs from 'fs-extra'
+import * as fs from 'fs'
 
 const log = console.log
 
@@ -17,8 +17,7 @@ const runBuild = async (isProduction) => {
     const cssEntrypointPath = `${cwd}/frontend/resources/css/app.css`
     const outDir = `${cwd}/frontend/public/admin-contents`
 
-    fs.rmdirSync(outDir, { })
-
+    
     const buildResult = await build({
         entryPoints: [
             jsEntrypointPath, 

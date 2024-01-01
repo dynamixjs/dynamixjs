@@ -1,4 +1,5 @@
-import { readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
+import * as ejs from "ejs"
 
 const cwd = process.cwd()
 
@@ -23,9 +24,30 @@ const getEntryPoints = () => {
     }
 }
 
+const getPageView = (pageIndex) => {
+
+    let templateStr
+    let pagePath
+
+    const module = pageIndex.split(":")[0]
+    const page = pageIndex.split(":")[1]
+
+    if (module == "main") {
+        pagePath = `${cwd}/frontend/resources/views/pages/${page}.ejs`
+    }else{
+        pagePath = `${cwd}/plugins/${module}/${page}.ejs`
+    }
+
+    templateStr = readFileSync(pagePath, 'utf-8')
+    return ejs.render(templateStr)
+}
+
 const indexAdminPage = async (request, response) => {
     const indexPath = `${cwd}/frontend/resources/views/index-admin.ejs`
-    response.render(indexPath, { entryPoints: getEntryPoints() })
+    response.render(indexPath, { 
+        entryPoints: getEntryPoints(), 
+        pageView: getPageView(request.params.page) 
+    })
 }
 
 export { indexAdminPage }

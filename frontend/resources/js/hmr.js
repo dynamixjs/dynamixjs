@@ -1,18 +1,5 @@
 import { io } from "socket.io-client"
 
-let ws
+const socket = io('/dev-server')
 
-window.onload = () => {
-    ws = new io()
-
-    const displayError = (error) => {
-
-    }
-    
-    ws.on('reloadPage', ()=> {
-
-    })
-    ws.on('scriptError', (errorText)=> {
-        
-    })
-}
+socket.on('reload', () => window.location.reload())
