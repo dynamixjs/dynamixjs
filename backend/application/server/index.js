@@ -4,7 +4,6 @@ import { createServer } from 'node:http'
 import { useRouter } from './router.js'
 import { useMiddleware } from './middleware.js'
 import { readConfig } from '../../utility/readConfig.js'
-import { loadHttpActions } from '../../utility/pluginsLoader.js'
 import { syncDatabase } from '../database/migration.js'
 import { Server } from 'socket.io'
 import { useSocket } from './socket.js'
@@ -20,14 +19,15 @@ const log = console.log
 useMiddleware(application)
 useRouter(application)
 useSocket(socket)
-loadHttpActions(application)
 
 const startServer = async () => {
-    log(chalk.blue("[info]"), "Syncronizing database...")
+
+    log(chalk.blue("[database]"), "Syncronizing...")
     await syncDatabase()
-    log(chalk.blue("[info]"), "Complete.")
-    log(chalk.blue("[info]"), "Starting server...")
-    server.listen(port, host, () => log(chalk.blue("[info]"), `Server running at http://${host}:${port}`))
+    log(chalk.blue("[database]"), "Syncronizing complete.")
+    log(chalk.blue("[server]"), "Starting...")
+    server.listen(port, host, () => log(chalk.blue("[server]"), `Server running at http://${host}:${port}`))
+    
 }
 
 export { startServer }

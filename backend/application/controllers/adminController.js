@@ -1,5 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
-import * as ejs from "ejs"
+import { loadPluginsInfo } from '../../utility/pluginsLoader.js'
+import prettify from 'html-prettify'
+import { render } from '../../utility/ejsCustomRendering.js'
 
 const cwd = process.cwd()
 
@@ -24,30 +26,50 @@ const getEntryPoints = () => {
     }
 }
 
-const getPageView = (pageIndex) => {
+const createSidenavMenus = async () => {
+    const menus = [
+        {
+            title: "Posts",
+            icon: "",
+            action: "main:post-listing"
+        },
+        {
+            title: "Template",
+            icon: "",
+            action: "main:templates"
+        },
+        {
+            title: "Plugin",
+            icon: "",
+            action: "main:plugins"
+        }
+    ]
 
-    let templateStr
-    let pagePath
+    const allPlugins = await loadPluginsInfo()
+    const plugins = allPlugins.filter(p => p.showInSidemenu)
+    plugins.map(p => {
+        menus.push({
+            title: p.name,
+            icon: p.icon,
+            action: `plugin:${p.moduleName}`
+        })
+    })
 
-    const module = pageIndex.split(":")[0]
-    const page = pageIndex.split(":")[1]
-
-    if (module == "main") {
-        pagePath = `${cwd}/frontend/resources/views/pages/${page}.ejs`
-    }else{
-        pagePath = `${cwd}/plugins/${module}/${page}.ejs`
-    }
-
-    templateStr = readFileSync(pagePath, 'utf-8')
-    return ejs.render(templateStr)
+    return menus
 }
 
 const indexAdminPage = async (request, response) => {
-    const indexPath = `${cwd}/frontend/resources/views/index-admin.ejs`
-    response.render(indexPath, { 
-        entryPoints: getEntryPoints(), 
-        pageView: getPageView(request.params.page) 
+    const pages = request.params.page.split(':')
+    const path = `${cwd}/frontend/resources/views/`
+    const mainPath = `${cwd}/frontend/resources/views/pages/`
+    const pluginPath = `${cwd}/plugins/${pages[0]}/views/pages`
+    const html = render(path, 'index-admin.ejs', { 
+        entryPoints: getEntryPoints(),
+        sideMenus: await createSidenavMenus(),
+        pageView: render(pages[0] == "main" ? mainPath : pluginPath, `${pages[1]}.ejs`)
     })
+
+    response.send(prettify(html))
 }
 
 export { indexAdminPage }

@@ -7,11 +7,14 @@
         <main class="bg-gray-100">
             <div class="fixed h-full w-1/4 left-0 bg-white border-r">
                <div id="header" class="flex items-center justify-center h-24 border-b ">
-                    <p>Dynamix.js</p>
+                    <%- include("pages/logo.ejs") %>
                </div>
+               <ul>
+                    <%- include("partials/sidenav.ejs", { menus: sideMenus }) %>
+               </ul>
             </div>
             <div class="fixed h-14 w-3/4 right-0 bg-white border-b">
-               
+                
             </div>
             <div class="fixed h-full mt-14 w-3/4 right-0 bg-white">
                 <%- pageView %>

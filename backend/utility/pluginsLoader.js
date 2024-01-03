@@ -1,18 +1,32 @@
-import { readdirSync } from "node:fs"
+import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { get } from "node:https"
+import { createRequire } from 'node:module'
+import plugin from "tailwindcss"
 
+const r = createRequire(import.meta.url)
 const pluginPath = `${process.cwd()}/plugins`
 
-const loadHttpActions = async (application) => {
-
-    application.get('/plugincall/:action', async (request, response) => {
-        const actionParams = request.params.action.split(':')
-        const pluginModulePath = `${pluginPath}/${actionParams[0]}/main.js`
-        if (!await import(pluginModulePath)) return response.send(`Plugin ${actionParams[0]} not found`)
-        const { getActions } = await import(pluginModulePath)
-        const action = getActions().filter(v => v.actionName == actionParams[1])[0]
-        response.send(action.call())
-    })
+const loadPlugin = async pluginMetadata => {
+    const modulePath = `${pluginPath}/${pluginMetadata.moduleName}/${pluginMetadata.module}`
+    if (existsSync(modulePath)) return await import(modulePath)
 }
 
-export { loadHttpActions }
+const loadPluginsInfo = async (pluginName = "") => {
+   
+   const plugins = []
+   const avaiablePlugins =  readdirSync(pluginPath)
+   
+   avaiablePlugins.map( async plugin => {
+        const pluginMetadataPath = `${pluginPath}/${plugin}/metadata.json`
+        if (!existsSync(pluginMetadataPath)) return
+        const metadata = r(pluginMetadataPath)
+        metadata['moduleName'] = plugin
+        plugins.push(metadata)
+
+    })
+
+    if (pluginName !== "") return plugins.filter(v => v == pluginName)[0]
+    return plugins
+}
+
+export { loadPluginsInfo, loadPlugin }

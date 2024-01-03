@@ -8,7 +8,6 @@ const useMiddleware = application => {
 
     application.set('view engine', 'ejs')
     
-    application.get('app', (req, res) => res.send("Ok"))
 }
 
 export { useMiddleware }

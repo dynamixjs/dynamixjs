@@ -1,0 +1,13 @@
+{
+    "version": "1.0.0",
+    "name": "Plugin Example",
+    "description": "Blog Post Listing",
+    "module": "main.js",
+    "assets": "assets",
+    "indexView": "views/index-plugin.ejs",
+    "logo": "",
+    "image": "",
+    "tabIcon": "",
+    "author": "dynamixjs",
+    "showInSidemenu": true
+}
