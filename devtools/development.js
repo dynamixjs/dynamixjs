@@ -51,11 +51,12 @@ const buildFrontend = () => {
 
 }
 
-chokidar.watch("backend").on("change", path => {
+chokidar.watch("src").on("change", path => {
+    console.log("\nRecompiling... \n")
     buildBackend()
 })
 
-chokidar.watch("frontend").on("change", path => {
+chokidar.watch("views").on("change", path => {
     buildBackend()
 })
 
