@@ -1,5 +1,5 @@
 {
-  "name": "ngademincms",
+  "name": "dynamixjs",
   "version": "1.0.0",
   "description": "Simple CMS for nodejs powered by Express.js",
   "main": "index.js",
