@@ -22,7 +22,7 @@ const startBackendDev = () => {
 const buildBackend = async () => {
     try {
         const buildResult = await esbuild.build({
-            entryPoints: ["backend/index.ts"],
+            entryPoints: ["src/index.ts"],
             outfile: path.join(outDir, "dynamix"),
             target: "node18",
             platform: "node",

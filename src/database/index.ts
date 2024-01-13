@@ -6,8 +6,8 @@ const syncronizeDatabase = async () => {
 
     switch (databaseDriver) {
         case "sequelize":
-            const { database } = await import('./connections/sequelize')
-            await database.sync({ alter: true })
+            const { syncronize } = await import('./connections/sequelize')
+            await syncronize()
             break;
         case "mongoose":
 

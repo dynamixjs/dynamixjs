@@ -1,7 +1,5 @@
 node_modules
 
-scripts
-
 tmp
 
-tools
+.env

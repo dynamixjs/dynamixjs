@@ -3,7 +3,7 @@ import { get } from "../../env"
 
 const connection = get("SQL_CONNECTION")
 
-let database: Sequelize
+let database: Sequelize 
 
 switch (connection) {
     case "sqlite":
@@ -25,9 +25,14 @@ switch (connection) {
         break;
 }
 
+const syncronize = async () => {
+    await import("../models/sequelize")
+    await database.sync({ alter: true })
+}
 
-import '../models/sequelize'
+export { database, syncronize }
 
 
-export { database }
+
+
 
