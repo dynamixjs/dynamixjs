@@ -5,11 +5,8 @@
   "main": "index.js",
   "author": "ngademin",
   "license": "MIT",
-  "type": "module",
   "scripts": {
-    "installdeps": "npm_config_build_from_source=true yarn install",
-    "start": "node backend/index.js start",
-    "dev": "node backend/index.js start:development",
+    "dev": "node devtools/development.js",
     "build:backend": "",
     "build:frontend": "node tools/esbuild.frontend.js",
     "build:all": ""
