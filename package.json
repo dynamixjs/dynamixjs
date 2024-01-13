@@ -7,9 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "node devtools/development.js",
-    "build:backend": "",
-    "build:frontend": "node tools/esbuild.frontend.js",
-    "build:all": ""
+    "build": "node devtools/development.js --production"
   },
   "dependencies": {
     "@editorjs/checklist": "^1.6.0",

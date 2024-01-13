@@ -1,0 +1,16 @@
+{
+    "name": "dynamixjs",
+    "version": "1.0.0",
+    "description": "Simple CMS for nodejs powered by Express.js",
+    "main": "index.js",
+    "bin": "./cli",
+    "author": "dynamixjs",
+    "license": "MIT",
+    "scripts": {
+      
+    },
+    "dependencies": {
+      "sqlite3": "^5.1.6"
+    }
+  }
+  

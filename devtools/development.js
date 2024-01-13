@@ -3,19 +3,27 @@ const chokidar = require('chokidar')
 const { spawn, execSync } = require('child_process')
 const path = require('path')
 
+const express = require('express')
+const { createServer } = require('http')
+const { Server } = require('socket.io')
+
+const app = express()
+const server = createServer(app)
+const io = new Server(server)
+
 const l = console.log
 const isProduction = process.argv.slice(2)[0] == "--production"
 const bufferToString = bufferData => Buffer.from(bufferData).toString('utf8')
 const printStd = data => l(bufferToString(data).trim())
 const outDir = isProduction ? "release/" : ".dynamix/__development/"
 
-let backendChildProcess, frontendChildProcess
+let child
 
 const startBackendDev = () => {
-    backendChildProcess = spawn("node", [`${outDir}dynamix`], { env: { ...process.env, FORCE_COLOR: true }})
-    backendChildProcess.stdout.on('data', printStd)
-    backendChildProcess.stderr.on('data', printStd)
-    backendChildProcess.stdin.on('close', () => execSync(`rimraf ${outDir}`))
+    child = spawn("node", [`${outDir}dynamix`], { env: { ...process.env, FORCE_COLOR: true }})
+    child.stdout.on('data', printStd)
+    child.stderr.on('data', printStd)
+    child.stdin.on('close', () => isProduction ? null : execSync(`rimraf ${outDir}`))
 }
 
 
@@ -30,17 +38,19 @@ const buildBackend = async () => {
             minify: isProduction,
             external: ["esbuild"],
             define: {
-                
+                ['process.env.DEBUG'] : `${!isProduction}`
             }
         })    
 
-        if (backendChildProcess) {
-           if (!backendChildProcess.killed) {
-                backendChildProcess.kill()
-           }
+        if (!isProduction) {
+            if (child) {
+                if (!child.killed) {
+                     child.kill()
+                }
+             }
+     
+             startBackendDev()
         }
-
-        startBackendDev()
 
     } catch (error) {
         l(error)
@@ -51,14 +61,28 @@ const buildFrontend = () => {
 
 }
 
-chokidar.watch("src").on("change", path => {
-    console.log("\nRecompiling... \n")
-    buildBackend()
-})
+if (!isProduction) {
+    chokidar.watch("src").on("change", path => {
+        console.log("\nRecompiling... \n")
+        buildBackend()
+    })
 
-chokidar.watch("views").on("change", path => {
-    buildBackend()
-})
+    chokidar.watch("resources/public").on("change", path => {
+        
+    })
+
+    chokidar.watch("resources/views").on("change", path => {
+        
+    })
+
+    app.use(express.static("assets"))
+
+    server.listen(8080, () => {
+        console.log("Development server running...")
+    })
+}
 
 buildBackend()
+
+
 

@@ -5,7 +5,15 @@ const AdminSchema: ModelAttributes = {
         type: DataTypes.UUIDV4,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4
-    }
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    fullname: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
 }
 
 export { AdminSchema }
