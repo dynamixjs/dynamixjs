@@ -6,8 +6,8 @@
   "author": "ngademin",
   "license": "MIT",
   "scripts": {
-    "dev": "node devtools/development.js",
-    "build": "node devtools/development.js --production"
+    "dev": "node devtools/main.js",
+    "build": "node devtools/main.js --production"
   },
   "dependencies": {
     "@editorjs/checklist": "^1.6.0",

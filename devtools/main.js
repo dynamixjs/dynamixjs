@@ -1,4 +1,5 @@
 const esbuild = require('esbuild')
+const css = require('esbuild-style-plugin')
 const chokidar = require('chokidar')
 const { spawn, execSync } = require('child_process')
 const path = require('path')
@@ -57,8 +58,31 @@ const buildBackend = async () => {
     }
 }
 
-const buildFrontend = () => {
+const buildFrontend = async () => {
+    try {
+        const buildResult = await esbuild.build({
+            entryPoints: ["resources/public/js/index.ts","resources/public/css/index.css"],
+            outdir: !isProduction ? "assets" : path.join(outDir, "assets"),
+            bundle: true,
+            minify: isProduction,
+            external: ["esbuild"],
+            plugins: [
+                css({
+                    postcss: {
+                        plugins : [require("tailwindcss"), require("autoprefixer")]
+                    }
+                })
+            ],
+            define: {
+                ['process.env.DEBUG'] : `${!isProduction}`
+            }
+        })    
 
+        io.emit('reloadPage')
+
+    } catch (error) {
+        l(error)
+    }
 }
 
 if (!isProduction) {
@@ -68,7 +92,8 @@ if (!isProduction) {
     })
 
     chokidar.watch("resources/public").on("change", path => {
-        
+        console.log("\nRecompiling assets... \n")
+        buildFrontend()
     })
 
     chokidar.watch("resources/views").on("change", path => {
@@ -78,11 +103,12 @@ if (!isProduction) {
     app.use(express.static("assets"))
 
     server.listen(8080, () => {
-        console.log("Development server running...")
+        console.log("\nStarting dev server... \n")
     })
 }
 
 buildBackend()
+buildFrontend()
 
 
 
